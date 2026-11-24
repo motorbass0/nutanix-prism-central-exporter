@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="nutanix-prism-central-exporter" \
       org.opencontainers.image.description="Prometheus exporter for Nutanix Prism Central (API v4)" \
-      org.opencontainers.image.source="https://github.com/<owner>/nutanix-prism-central-exporter"
+      org.opencontainers.image.source="https://github.com/motorbass0/nutanix-prism-central-exporter"
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
