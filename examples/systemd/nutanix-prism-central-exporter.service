@@ -1,0 +1,41 @@
+# Example systemd unit for running the exporter without Docker.
+#
+# Install:
+#   install -D -m 0755 prism_exporter.py /opt/nutanix-prism-central-exporter/prism_exporter.py
+#   install -D -m 0600 nutanix-prism-central-exporter.env /etc/nutanix-prism-central-exporter/nutanix-prism-central-exporter.env
+#   cp nutanix-prism-central-exporter.service /etc/systemd/system/
+#   systemctl daemon-reload && systemctl enable --now nutanix-prism-central-exporter
+
+[Unit]
+Description=Prometheus exporter for Nutanix Prism Central
+Documentation=https://github.com/<owner>/nutanix-prism-central-exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/nutanix-prism-central-exporter/prism_exporter.py
+# Same variables as the Docker .env file (root-owned, mode 0600)
+EnvironmentFile=/etc/nutanix-prism-central-exporter/nutanix-prism-central-exporter.env
+Restart=on-failure
+RestartSec=5
+
+# Run as an ephemeral unprivileged user
+DynamicUser=yes
+
+# Hardening
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

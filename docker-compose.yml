@@ -1,0 +1,18 @@
+services:
+  nutanix-prism-central-exporter:
+    build: .
+    image: nutanix-prism-central-exporter:latest
+    container_name: nutanix-prism-central-exporter
+    restart: unless-stopped
+    ports:
+      - "9421:9421"
+    env_file:
+      - .env
+    # Optional: CA used to sign Prism Central certificates (set PRISM_CA_FILE in .env)
+    # volumes:
+    #   - ./ca.pem:/etc/nutanix-prism-central-exporter/ca.pem:ro
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

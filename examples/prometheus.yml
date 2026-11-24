@@ -1,0 +1,36 @@
+# Example Prometheus scrape job for nutanix-prism-central-exporter.
+#
+# This file is NOT read by the exporter container. It is a snippet for YOUR
+# Prometheus server: the exporter never pushes data, Prometheus pulls it.
+#
+# How to use it:
+#   1. Start the exporter: docker compose up -d
+#   2. Add this job to Prometheus, either:
+#        - by copying it under "scrape_configs:" in your prometheus.yml, or
+#        - by dropping this file in a directory loaded with "scrape_config_files:"
+#          (Prometheus >= 2.43)
+#      Then adapt:
+#        - "targets": your Prism Central FQDNs or IPs (port 9440 is implied)
+#        - "replacement": the address where Prometheus reaches the exporter
+#          (container name if both share a Docker network, otherwise <host-ip>:9421)
+#   3. Reload Prometheus. Metrics start flowing on the next scrape.
+#
+# Every target uses the same PRISM_USER / PRISM_PASSWORD account, which must
+# exist (read-only) on each Prism Central.
+
+scrape_configs:
+  - job_name: nutanix-prism-central
+    scrape_interval: 60s
+    scrape_timeout: 45s
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - prism-central-a.example.com
+          - prism-central-b.example.com
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: nutanix-prism-central-exporter:9421
